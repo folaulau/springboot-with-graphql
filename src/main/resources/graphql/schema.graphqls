@@ -1,0 +1,39 @@
+type Chat {
+  id: ID!
+  title: String
+  uuid: String
+  messages: [Message]
+}
+
+type Message {
+  id: ID!
+  uuid: String
+  message: String
+  createdAt: String
+  chat: Chat
+  user: User
+}
+
+type User {
+  id: ID!
+  firstName: String
+  lastName: String
+  address: Address
+}
+
+type Address {
+  id: ID!
+  street: String
+  state: String
+  zipcode: String
+  city: String
+}
+
+type Query {
+  allChats: [Chat]
+  getMessagesByChatId(id: ID!): [Message]
+}
+
+type Subscription {
+    getMessagesForChat: Message
+}
