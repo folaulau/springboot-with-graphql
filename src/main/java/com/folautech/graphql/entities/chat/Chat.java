@@ -26,8 +26,6 @@ import java.util.UUID;
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
 @DynamicUpdate
 @Entity
-@SQLDelete(sql = "UPDATE chats SET deleted = 1 WHERE id = ?", check = ResultCheckStyle.NONE)
-@Where(clause = "deleted = 0")
 @Table(name = "chats", indexes = {@Index(columnList = "uuid"), @Index(columnList = "deleted")})
 public class Chat implements Serializable {
 
@@ -44,16 +42,9 @@ public class Chat implements Serializable {
     @Column(name = "title")
     private String title;
 
-//    @JsonManagedReference
     @JsonIgnoreProperties(value = {"chat","user"})
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "chat")
     private Set<Message> messages;
-
-//    @JsonIgnoreProperties(value = {"chats"})
-//    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-//    @JoinTable(name = "chat_users", joinColumns = {@JoinColumn(name = "chat_id")},
-//            inverseJoinColumns = {@JoinColumn(name = "user_id")})
-//    private Set<User> users;
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
@@ -66,13 +57,6 @@ public class Chat implements Serializable {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-//    public void addUser(User user){
-//        if(this.users==null){
-//            this.users = new HashSet<>();
-//        }
-//        this.users.add(user);
-//    }
-
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
@@ -81,7 +65,7 @@ public class Chat implements Serializable {
     @PrePersist
     private void preCreate() {
         if (this.uuid == null || this.uuid.isEmpty()) {
-            this.uuid = "chat-" + UUID.randomUUID().toString();
+            this.uuid = "chat-" + UUID.randomUUID().toString().replaceAll("-", "");
         }
     }
 }

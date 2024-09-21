@@ -3,7 +3,6 @@ package com.folautech.graphql.entities.user;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.folautech.graphql.entities.address.Address;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
@@ -59,10 +58,6 @@ public class User implements Serializable {
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
-
-    @JsonIgnoreProperties(value = {"user"})
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
-    private Address address;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

@@ -1,6 +1,5 @@
 package com.folautech.graphql.dataloader;
 
-import com.folautech.graphql.entities.address.Address;
 import com.folautech.graphql.entities.user.User;
 import com.folautech.graphql.entities.user.UserRepository;
 import com.github.javafaker.Faker;
@@ -25,13 +24,6 @@ public class UserDataLoaderService {
 
         loadAdminUsers();
 
-        Address address = Address.builder()
-                .street("123 Halloween St")
-                .city("Lehi")
-                .state("UT")
-                .zipcode("83043")
-                .build();
-
         User user = null;
 
         for (int i=3;i<=20;i++){
@@ -45,10 +37,8 @@ public class UserDataLoaderService {
                     .dob(LocalDate.of(1986,12,03))
                     .email((firstName+lastName).toLowerCase()+"@gmail.com")
                     .phoneNumber(faker.phoneNumber().cellPhone())
-                    .address(address)
-                    .build();
 
-            address.setUser(user);
+                    .build();
 
             userRepository.saveAndFlush(user);
         }
@@ -58,12 +48,6 @@ public class UserDataLoaderService {
     }
 
     private void loadAdminUsers(){
-        Address address = Address.builder()
-                .street("123 Halloween St")
-                .city("Lehi")
-                .state("UT")
-                .zipcode("83043")
-                .build();
 
         User folau = User.builder()
                 .id(1L)
@@ -72,10 +56,7 @@ public class UserDataLoaderService {
                 .dob(LocalDate.of(1986,12,03))
                 .email("folaukaveinga@gmail.com")
                 .phoneNumber("3109934731")
-                .address(address)
                 .build();
-
-        address.setUser(folau);
 
         userRepository.saveAndFlush(folau);
 
@@ -86,10 +67,7 @@ public class UserDataLoaderService {
                 .dob(LocalDate.of(1987,04,12))
                 .email("lisakaveinga@gmail.com")
                 .phoneNumber("3439934731")
-                .address(address)
                 .build();
-
-        address.setUser(lisa);
 
         userRepository.saveAndFlush(lisa);
     }
