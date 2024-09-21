@@ -2,7 +2,7 @@ package com.folautech.graphql.dataloader;
 
 import com.folautech.graphql.entities.address.Address;
 import com.folautech.graphql.entities.user.User;
-import com.folautech.graphql.repository.UserRepository;
+import com.folautech.graphql.entities.user.UserRepository;
 import com.github.javafaker.Faker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
