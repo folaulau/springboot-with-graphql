@@ -1,0 +1,17 @@
+// get all messages for a chat
+query getMessagesForChat($id : ID!) {
+  getMessagesByChatId(id: $id) {
+    id
+    message
+    user {
+      id
+      firstName
+      lastName
+    }
+  }
+}
+
+// variables
+{
+  "id": "1"
+}

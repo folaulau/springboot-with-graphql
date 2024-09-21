@@ -34,6 +34,11 @@ public class SpringbootWithGraphqlApplication implements CommandLineRunner {
 	@Order(Integer.MAX_VALUE)
 	@Bean
 	public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
+
+		userDataLoaderService.load();
+
+		chatDataLoaderService.load();
+
 		return args -> {
 
 			// Display Environmental Useful Variables
@@ -59,9 +64,7 @@ public class SpringbootWithGraphqlApplication implements CommandLineRunner {
 				System.out
 						.println("**********************************************************************");
 
-				userDataLoaderService.load();
 
-				chatDataLoaderService.load();
 
 			} catch (Exception e) {
 				e.printStackTrace();
