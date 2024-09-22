@@ -57,6 +57,9 @@ public class SpringbootWithGraphqlApplication implements CommandLineRunner {
 				System.out.println("** Internal Url: http://localhost:"
 						+ env.getProperty("server.port"));
 
+				System.out.println("** Internal Url: http://localhost:"
+						+ env.getProperty("server.port")+"/graphiql");
+
 				System.out.println("** Internal Swagger: http://localhost:"
 						+ env.getProperty("server.port") + "/swagger-ui.html");
 				System.out.println("** External Swagger: http://"
