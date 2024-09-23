@@ -28,6 +28,25 @@ query getMessagesForChat($id : ID!) {
 }
 ```
 
+```graphql
+subscription streamChatMessages($id : ID!) {
+  streamMessagesForChat(id: $id) {
+    id
+    message
+    user{
+      id
+      firstName
+      lastName
+    }
+  }
+}
+
+// variables
+{
+  "id": "1"
+}
+```
+
 ## Technologies
 - Spring Boot
 - GraphQL
