@@ -75,16 +75,20 @@ public class ChatController {
 //                    return message;
 //                }));
 
-        return generateMessageStream(id);
-    }
-
-    private Flux<List<Message>> generateMessageStream(Long chatId) {
         return Flux.interval(Duration.ofSeconds(10))
                 .map(tick -> {
                     PageRequest pageRequest = PageRequest.of(0, 10, org.springframework.data.domain.Sort.by("id").descending());
-                    return messageRepository.findByChatId(chatId,pageRequest).getContent();
+                    return messageRepository.findByChatId(id,pageRequest).getContent();
                 });
     }
+
+//    private Flux<List<Message>> generateMessageStream(Long chatId) {
+//        return Flux.interval(Duration.ofSeconds(10))
+//                .map(tick -> {
+//                    PageRequest pageRequest = PageRequest.of(0, 10, org.springframework.data.domain.Sort.by("id").descending());
+//                    return messageRepository.findByChatId(chatId,pageRequest).getContent();
+//                });
+//    }
 
 
 }
