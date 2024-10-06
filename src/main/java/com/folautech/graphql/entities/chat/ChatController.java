@@ -14,6 +14,8 @@ import reactor.core.publisher.Flux;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -25,6 +27,8 @@ public class ChatController {
     ChatRepository chatRepository;
     @Autowired
     MessageRepository messageRepository;
+
+    Random random = new Random();
 
     @QueryMapping
     public List<Chat> getAllChats() {
@@ -51,22 +55,24 @@ public class ChatController {
 //        )).delayElements(Duration.ofSeconds(1))
 //                .take(10);
 
-        return Flux.fromStream(
-                Stream.generate(() -> {
+//        return Flux.fromStream(
+//                Stream.generate(() -> {
+//
+//                    try {
+//                        Thread.sleep(1000);
+//                    } catch (InterruptedException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//
+//                    Message message = new Message();
+//                    message.setId(1L); // Ensure 'id' is set properly. Replace with a proper ID if necessary.
+//                    message.setUuid("some-uuid");
+//                    message.setMessage("heyhey");
+//                    message.setUser(new User(1L));
+//                    return message;
+//                }));
 
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                    Message message = new Message();
-                    message.setId(1L); // Ensure 'id' is set properly. Replace with a proper ID if necessary.
-                    message.setUuid("some-uuid");
-                    message.setMessage("heyhey");
-                    message.setUser(new User(1L));
-                    return message;
-                }));
+        return generateMessageStream(id);
     }
 
     @SubscriptionMapping("getMessagesForChat")
@@ -86,8 +92,15 @@ public class ChatController {
 
     private Flux<Message> generateMessageStream(Long userId) {
         return Flux.interval(Duration.ofSeconds(1))
-                .map(tick -> new Message("heyhey", new User(userId)))
-                .take(10);
+                .map(tick -> {
+                    Message message = new Message();
+                    message.setId(random.nextLong(1,99999999)); // Ensure 'id' is set properly. Replace with a proper ID if necessary.
+                    message.setUuid(UUID.randomUUID().toString());
+                    message.setMessage("heyhey "+random.nextLong(1,99999999));
+                    message.setUser(new User(1L));
+                    return message;
+                })
+                .take(100);
     }
 
 
