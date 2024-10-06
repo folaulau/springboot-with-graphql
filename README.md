@@ -2,6 +2,8 @@
 
 This project is a simple example of how to use GraphQL with Spring Boot.
 
+Status: subscription is not working with jpa. Flux has to use reactive. Query is working well.
+
 ## How to run
 
 1. Clone this repository
