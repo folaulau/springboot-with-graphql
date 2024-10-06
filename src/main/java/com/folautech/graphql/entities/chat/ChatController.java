@@ -6,6 +6,7 @@ import com.folautech.graphql.entities.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.graphql.data.method.annotation.SubscriptionMapping;
 import org.springframework.stereotype.Controller;
@@ -25,41 +26,67 @@ public class ChatController {
     @Autowired
     MessageRepository messageRepository;
 
-    @SchemaMapping(typeName = "Query",value = "allChats")
+    @QueryMapping
     public List<Chat> getAllChats() {
         log.info("getAllChats");
         return chatRepository.findAll();
     }
 
-    @SchemaMapping(typeName = "Query",value = "getMessagesByChatId")
+    @QueryMapping
     public List<Message> getMessagesByChatId(@Argument Long id) {
         log.info("getMessagesByChatId, id={}",id);
         return messageRepository.findByChatId(id);
     }
 
-//    @QueryMapping
-//    public List<Message> getMessagesByChatId(@Argument Long id) {
-//        return messageRepository.findByChatId(id);
-//    }
+    @SubscriptionMapping("streamMessagesForChat")
+    public Flux<Message> streamMessagesForChat(@Argument Long id) {
+        log.info("streamMessagesForChat, id={}",id);
+//        return Flux.fromStream(Stream.generate(
+//                new Supplier<Message>() {
+//                    @Override
+//                    public Message get() {
+//                        return new Message("heyhey",new User(1L));
+//                    }
+//                }
+//        )).delayElements(Duration.ofSeconds(1))
+//                .take(10);
 
-//    @SubscriptionMapping
-//    public List<Message> getMessagesForChat() {
-//        Long id = 1L;
-//        log.info("getMessagesFoChat, id={}",id);
-//        return messageRepository.findByChatId(id);
-//    }
-    @SubscriptionMapping
-    public Flux<Message> getMessagesForChat() {
-        Long id = 1L;
-        log.info("getMessagesFoChat, id={}",id);
-        return Flux.fromStream(Stream.generate(
-                new Supplier<Message>() {
-                    @Override
-                    public Message get() {
-                        return new Message("heyhey",new User(1L));
+        return Flux.fromStream(
+                Stream.generate(() -> {
+
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
                     }
-                }
-        )).delayElements(Duration.ofSeconds(1))
+
+                    Message message = new Message();
+                    message.setId(1L); // Ensure 'id' is set properly. Replace with a proper ID if necessary.
+                    message.setUuid("some-uuid");
+                    message.setMessage("heyhey");
+                    message.setUser(new User(1L));
+                    return message;
+                }));
+    }
+
+    @SubscriptionMapping("getMessagesForChat")
+    public Flux<Message> getMessagesForChat(@Argument Long id) {
+//        Long id = 1L;
+        log.info("getMessagesForChat, id={}",id);
+        return Flux.fromStream(Stream.generate(
+                        new Supplier<Message>() {
+                            @Override
+                            public Message get() {
+                                return new Message("heyhey",new User(1L));
+                            }
+                        }
+                )).delayElements(Duration.ofSeconds(1))
+                .take(10);
+    }
+
+    private Flux<Message> generateMessageStream(Long userId) {
+        return Flux.interval(Duration.ofSeconds(1))
+                .map(tick -> new Message("heyhey", new User(userId)))
                 .take(10);
     }
 

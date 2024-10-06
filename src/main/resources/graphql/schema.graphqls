@@ -26,5 +26,6 @@ type Query {
 }
 
 type Subscription {
-    streamMessagesForChat(id: ID!): [Message]
+    streamMessagesForChat(id: ID!): Message
+    getMessagesForChat: Message
 }
