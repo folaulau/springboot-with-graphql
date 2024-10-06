@@ -25,6 +25,7 @@ public class ChatController {
 
     @Autowired
     ChatRepository chatRepository;
+
     @Autowired
     MessageRepository messageRepository;
 
@@ -43,7 +44,7 @@ public class ChatController {
     }
 
     @SubscriptionMapping("streamMessagesForChat")
-    public Flux<Message> streamMessagesForChat(@Argument Long id) {
+    public Flux<List<Message>> streamMessagesForChat(@Argument Long id) {
         log.info("streamMessagesForChat, id={}",id);
 //        return Flux.fromStream(Stream.generate(
 //                new Supplier<Message>() {
@@ -75,22 +76,7 @@ public class ChatController {
         return generateMessageStream(id);
     }
 
-    @SubscriptionMapping("getMessagesForChat")
-    public Flux<Message> getMessagesForChat(@Argument Long id) {
-//        Long id = 1L;
-        log.info("getMessagesForChat, id={}",id);
-        return Flux.fromStream(Stream.generate(
-                        new Supplier<Message>() {
-                            @Override
-                            public Message get() {
-                                return new Message("heyhey",new User(1L));
-                            }
-                        }
-                )).delayElements(Duration.ofSeconds(1))
-                .take(10);
-    }
-
-    private Flux<Message> generateMessageStream(Long userId) {
+    private Flux<List<Message>> generateMessageStream(Long userId) {
         return Flux.interval(Duration.ofSeconds(1))
                 .map(tick -> {
                     Message message = new Message();
@@ -98,7 +84,7 @@ public class ChatController {
                     message.setUuid(UUID.randomUUID().toString());
                     message.setMessage("heyhey "+random.nextLong(1,99999999));
                     message.setUser(new User(1L));
-                    return message;
+                    return List.of(message);
                 })
                 .take(100);
     }
