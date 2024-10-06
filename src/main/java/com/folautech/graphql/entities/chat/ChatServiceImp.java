@@ -5,6 +5,7 @@ import com.folautech.graphql.entities.message.Message;
 import com.folautech.graphql.entities.message.MessageRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,7 +32,10 @@ public class ChatServiceImp implements ChatService{
         chatDTO.setUuid(chat.getUuid());
 //        chatDTO.setMessages(chat.getMessages());
 
-        List<Message> messages = messageRepository.findByChatId(id);
+        PageRequest pageRequest = PageRequest.of(0, 10, org.springframework.data.domain.Sort.by("id").descending());
+
+        List<Message> messages = messageRepository.findByChatId(id, pageRequest).getContent();
+
         chatDTO.setMessages(messages);
 
         return chatDTO;

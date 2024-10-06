@@ -5,6 +5,7 @@ import com.folautech.graphql.entities.message.MessageRepository;
 import com.folautech.graphql.entities.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.graphql.data.method.annotation.SchemaMapping;
@@ -40,7 +41,8 @@ public class ChatController {
     @QueryMapping
     public List<Message> getMessagesByChatId(@Argument Long id) {
         log.info("getMessagesByChatId, id={}",id);
-        return messageRepository.findByChatId(id);
+        PageRequest pageRequest = PageRequest.of(0, 10, org.springframework.data.domain.Sort.by("id").descending());
+        return messageRepository.findByChatId(id,pageRequest).getContent();
     }
 
     @SubscriptionMapping("streamMessagesForChat")
@@ -76,17 +78,12 @@ public class ChatController {
         return generateMessageStream(id);
     }
 
-    private Flux<List<Message>> generateMessageStream(Long userId) {
-        return Flux.interval(Duration.ofSeconds(1))
+    private Flux<List<Message>> generateMessageStream(Long chatId) {
+        return Flux.interval(Duration.ofSeconds(10))
                 .map(tick -> {
-                    Message message = new Message();
-                    message.setId(random.nextLong(1,99999999)); // Ensure 'id' is set properly. Replace with a proper ID if necessary.
-                    message.setUuid(UUID.randomUUID().toString());
-                    message.setMessage("heyhey "+random.nextLong(1,99999999));
-                    message.setUser(new User(1L));
-                    return List.of(message);
-                })
-                .take(100);
+                    PageRequest pageRequest = PageRequest.of(0, 10, org.springframework.data.domain.Sort.by("id").descending());
+                    return messageRepository.findByChatId(chatId,pageRequest).getContent();
+                });
     }
 
 
